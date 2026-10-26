@@ -1,0 +1,100 @@
+/* MVIA design tokens — shared by ui/, ai/, voice/. Light "clay map" look (Mapbox-light / machine-sight),
+   with a dark machine palette for the MVIA scan view. Modules must use these vars, not raw colours. */
+:root {
+  --font-sans: 'Inter Tight', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* map / paper */
+  --paper: #f1f0ec;
+  --paper-2: #e8e7e2;
+  --clay: #fbfbf9;
+  --ink: #111214;
+  --ink-2: #3b3d42;
+  --ink-3: #74767d;
+  --ink-4: #a9abb1;
+  --line: rgba(17, 18, 20, 0.1);
+  --line-2: rgba(17, 18, 20, 0.18);
+
+  /* glass panels */
+  --panel: rgba(252, 252, 250, 0.86);
+  --panel-solid: #fcfcfa;
+  --panel-dark: rgba(14, 17, 20, 0.9);
+  --panel-blur: blur(14px) saturate(1.3);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.08), 0 18px 48px rgba(0, 0, 0, 0.14);
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  /* verdict palette (machine-sight card header) */
+  --ok: #3ddc84; /* viable / safe */
+  --ok-ink: #0a3d22;
+  --note: #5ab0ff; /* observar */
+  --warn: #f5b83d; /* precaución */
+  --risk: #ff4d4f; /* riesgo */
+  --live: #ff6a2b; /* single live accent (selections, routes, alarms) */
+
+  /* MVIA machine view */
+  --scan-0: #061a26;
+  --scan-1: #0b3a52;
+  --scan-2: #14627f;
+  --scan-3: #4fd1ff;
+  --scan-4: #b9f1ff;
+
+  /* data ramps (sequential) */
+  --ramp-0: #f6f1d9;
+  --ramp-1: #f2c879;
+  --ramp-2: #ea8a3c;
+  --ramp-3: #d04a2f;
+  --ramp-4: #7d1d3f;
+
+  --gutter: 16px;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+#app { position: fixed; inset: 0; }
+#app canvas { display: block; width: 100%; height: 100%; outline: none; }
+#hud, #chat-root, #voice-root { position: fixed; inset: 0; pointer-events: none; }
+#hud > *, #chat-root > *, #voice-root > * { pointer-events: auto; }
+#hud { z-index: 10; }
+#chat-root { z-index: 20; }
+#voice-root { z-index: 30; }
+
+.mono { font-family: var(--font-mono); letter-spacing: 0.02em; }
+
+/* ───── loader ───── */
+#loader {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  background: radial-gradient(1200px 600px at 50% 60%, #0b3a52 0%, #061a26 60%, #03111a 100%);
+  color: #dff6ff;
+  transition: opacity 0.9s ease, visibility 0.9s;
+}
+#loader.done { opacity: 0; visibility: hidden; }
+#loader::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(79, 209, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 209, 255, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at 50% 55%, black 0%, transparent 70%);
+}
+.loader-inner { position: relative; width: min(440px, calc(100vw - 32px)); }
+.loader-kicker { font: 500 11px/1 var(--font-mono); letter-spacing: 0.14em; color: #7fd6f5; display: flex; gap: 8px; align-items: center; }
+.loader-kicker .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--live); box-shadow: 0 0 10px var(--live); }
+.loader-title { font: 700 88px/0.95 var(--font-sans); letter-spacing: -0.04em; margin-top: 14px; }
+.loader-sub { font: 500 13px/1.4 var(--font-mono); color: #8fbccc; margin-top: 8px; }
+.loader-bar { height: 2px; background: rgba(79, 209, 255, 0.15); margin-top: 28px; overflow: hidden; }
+.loader-bar i { display: block; height: 100%; width: 0; background: var(--scan-3); box-shadow: 0 0 12px var(--scan-3); transition: width 0.3s ease; }
+.loader-row { display: flex; justify-content: space-between; margin-top: 10px; font: 500 11px/1 var(--font-mono); color: #8fbccc; letter-spacing: 0.06em; }
+#boot-error {
+  display: none; position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 200;
+  padding: 12px 14px; border-radius: 8px; background: #2a0b0d; color: #ffd6d6; font: 13px/1.4 var(--font-mono);
+}
